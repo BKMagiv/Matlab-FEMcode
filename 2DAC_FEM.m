@@ -68,8 +68,25 @@ for j = 2 : M + 1
   U(:,j) = Stiff \ b;
 end
 
+% make gif
+figure(1)
+filename = 'AC.gif';
+[meshX,meshY] = meshgrid(linspace(0,X,Nx + 1)',linspace(0,Y,Ny + 1)');
+for j = 1 : M + 1
+    uh = reshape(U(:,j),Ny + 1,Nx + 1);
+    
+    contourf(meshX,meshY,uh), axis([0 X 0 Y 0 1]), drawnow;
 
-%% function
+    im = frame2im(getframe(gcf));
+    [a,map] = rgb2ind(im,256);
+    if j == 1
+        imwrite(a,map,filename,'gif','LoopCount',Inf,'DelayTime',0.1);
+    else
+        imwrite(a,map,filename,'gif','WriteMode','append','DelayTime',0.1);
+    end
+end
+
+% function
 function P = mesh2D(Nx,Ny,X,Y)
     node = (Nx + 1) * (Ny + 1);
     P = zeros(node,2);
